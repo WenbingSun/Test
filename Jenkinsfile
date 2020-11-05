@@ -2,9 +2,9 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
+        stage('Verify Branch') {
             steps {
-                sh 'pwd'
+                sh $GIT_BRANCH
             }
         }
     }
