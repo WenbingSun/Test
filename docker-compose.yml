@@ -8,9 +8,11 @@ services:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
+      - ./entrypoint.sh:/entrypoint.sh
       - ./init-models.sh:/init-models.sh
     environment:
       - OLLAMA_HOST=0.0.0.0:11434
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
     restart: unless-stopped
     # Uncomment below if you have NVIDIA GPU
     # deploy:

@@ -12,41 +12,45 @@ This setup allows you to run a local Ollama server using Docker with the followi
 
 ## Quick Start
 
-### 1. Start the Ollama Server
+### 1. Start the Ollama Server (with automatic model download)
 
 ```bash
 docker-compose up -d
 ```
 
-This will:
+This will **automatically**:
 - Pull the official Ollama Docker image
 - Start the Ollama server on port 11434
 - Create a persistent volume for model storage
+- **Pull mistral-nemo:12b and llama3.1:8b models in the background**
 
-### 2. Pull the Models
+**Note**: The server starts immediately, but model downloads happen in the background and can take 10-30 minutes. You can use the server right away, but the specific models won't be available until downloads complete.
 
-Run the initialization script inside the container:
+### 2. Monitor Model Download Progress
 
-```bash
-docker exec ollama-server bash /init-models.sh
-```
-
-Or pull models manually:
+Watch the logs to see download progress:
 
 ```bash
-# Pull mistral-nemo:12b
-docker exec ollama-server ollama pull mistral-nemo:12b
-
-# Pull llama3.1:8b
-docker exec ollama-server ollama pull llama3.1:8b
+docker-compose logs -f ollama
 ```
 
-**Note**: Model downloads can take 10-30 minutes depending on your internet connection.
-
-### 3. Verify Models Are Available
+Or check which models are available:
 
 ```bash
 docker exec ollama-server ollama list
+```
+
+### 3. Manual Model Management (Optional)
+
+If you need to manually pull additional models or re-download:
+
+```bash
+# Run the initialization script
+docker exec ollama-server bash /init-models.sh
+
+# Or pull specific models
+docker exec ollama-server ollama pull mistral-nemo:12b
+docker exec ollama-server ollama pull llama3.1:8b
 ```
 
 ## Usage
@@ -205,6 +209,8 @@ ports:
 ```
 .
 ├── docker-compose.yml    # Docker Compose configuration
-├── init-models.sh        # Script to pull models
+├── Dockerfile           # Alternative Dockerfile for custom builds
+├── entrypoint.sh        # Automatic startup script (runs server + pulls models)
+├── init-models.sh       # Manual script to pull models
 └── OLLAMA_SETUP.md      # This file
 ```
